@@ -20,6 +20,14 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+# Check this is Debian 13 (trixie) — the Docker apt repo below is pinned to it
+# shellcheck source=/dev/null
+. /etc/os-release
+if [ "${ID:-}" != "debian" ] || [ "${VERSION_CODENAME:-}" != "trixie" ]; then
+    print_message "This script supports Debian 13 (trixie) only. Detected: ${PRETTY_NAME:-unknown}." "${RED}"
+    exit 1
+fi
+
 # Step 1: Update the system
 print_message "Updating system packages..." "${YELLOW}"
 apt update && apt upgrade -y
